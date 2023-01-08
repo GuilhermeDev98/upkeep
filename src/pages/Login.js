@@ -1,34 +1,38 @@
-import {useState, useRef} from 'react'
-import {Link} from 'react-router-dom'
+import { useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 
-function Login(){
+function Login() {
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const emailIdRef = useRef()
     const passwordRef = useRef()
 
-    const submitForm = (e) =>{
+    const submitForm = (e) => {
         e.preventDefault()
         setLoading(true)
         setErrorMessage("")
 
-        if(emailIdRef.current.value === "" || passwordRef.current.value === "" ){
-            setErrorMessage("Email Id and password is required! (use any value)")
+        if (emailIdRef.current.value === "" || passwordRef.current.value === "") {
+            setErrorMessage("E-Mail Ou Senha Inválidos!")
             setLoading(false)
         }
-        else{
+        else {
             // Call API to check user credentials and save token in localstorage
             localStorage.setItem("token", "DumyTokenHere")
             setLoading(false)
-            window.location.href = '/app/welcome'
+            window.location.href = '/app/dashboard'
         }
     }
 
-    return(
+    return (
         <div className="min-h-screen bg-base-200 flex items-center">
             <div className="card mx-auto w-full max-w-md  shadow-xl">
                 <div className="py-12 p-10 bg-base-100 rounded-xl">
-                    <h2 className='text-2xl font-semibold mb-2 text-center'>Login</h2>
+                    <div className='flex justify-center	items-center'>
+                        <img className="mask mask-circle w-10 mr-2" src="/logo.png" alt="UpKeep Logo" />
+                        <h1 className='text-3xl font-semibold mb-2 text-center'>UpKeep</h1>
+                    </div>
+                    <h5 className='font-semibold mb-2 mt-2 text-center'>Login</h5>
                     <form onSubmit={(e) => submitForm(e)}>
 
                         {/* Error Message container if any, after submitting form */}
@@ -38,23 +42,28 @@ function Login(){
                         <div className="mb-4">
                             <div className="form-control w-full">
                                 <label className="label">
-                                    <span className="label-text text-base-content">Email Id</span>
+                                    <span className="label-text text-base-content">E-Mail</span>
                                 </label>
-                                <input type="text" ref={emailIdRef} placeholder="Type here" className="input input-primary input-bordered w-full " />
+                                <input type="text" ref={emailIdRef} placeholder="" className="input input-primary input-bordered w-full " />
                             </div>
 
                             <div className="form-control mt-4 w-full">
                                 <label className="label">
-                                    <span className="label-text text-base-content">Password</span>
+                                    <span className="label-text text-base-content">Senha</span>
                                 </label>
-                                <input type="password" ref={passwordRef} placeholder="Type here" className="input input-primary input-bordered w-full " />
+                                <input type="password" ref={passwordRef} placeholder="Senha" className="input input-primary input-bordered w-full " />
                             </div>
-
                         </div>
-                
-                        <Link to="/forgot-password"><span className="text-sm  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">Forget Password</span></Link>
 
-                        <button type="submit" className={"btn mt-8 w-full btn-primary" + (loading ? " loading" : "")}>Login</button>
+                        <div className='text-center'>
+                            <Link to="/register"><span className="text-sm  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">Cadastre-se</span></Link>
+                        </div>
+
+                        <div className='text-center'>
+                            <Link to="/forgot-password"><span className="text-sm  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200">Esqueceu A Senha?</span></Link>
+                        </div>
+
+                        <button type="submit" className={"btn mt-8 w-full btn-primary" + (loading ? " loading" : "")}>Entrar</button>
                     </form>
                 </div>
             </div>

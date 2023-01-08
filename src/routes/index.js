@@ -1,6 +1,9 @@
 // All components mapping with path for internal routes
 
 import { lazy } from 'react'
+import Profile from '../pages/protected/Profile'
+import SignOut from '../pages/protected/SignOut'
+import Vehicles from '../pages/protected/Vehicles'
 
 const Dashboard = lazy(() => import('../pages/protected/Dashboard'))
 const Welcome = lazy(() => import('../pages/protected/Welcome'))
@@ -11,6 +14,8 @@ const Table = lazy(() => import('../pages/protected/Table'))
 const ReadMe = lazy(() => import('../pages/protected/ReadMe'))
 const Icons = lazy(() => import('../pages/protected/Icons'))
 const Notification = lazy(() => import('../pages/protected/Notification'))
+const Maintenances = lazy(() => import('../pages/protected/Maintenances'))
+
 
 
 const routes = [
@@ -47,10 +52,22 @@ const routes = [
     component: Table,
   },
   {
-    path: '/read-me',
-    component: ReadMe,
+    path: '/maintenances',
+    component: Maintenances,
   },
-  
+  {
+    path: '/vehicles',
+    component: Vehicles,
+  },
+  {
+    path: '/signout',
+    component: SignOut,
+  },
+  {
+    path: '/profile',
+    component: Profile,
+  },
+
 ]
 
 export default routes
