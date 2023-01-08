@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import RowDetailModalBody from '../features/table/components/RowDetailModalBody'
 import { MODAL_BODY_TYPES } from '../utils/globalConstantUtil'
 import { useSelector, useDispatch } from 'react-redux'
 import { closeModal } from '../features/common/modalSlice'
@@ -36,7 +35,6 @@ function ModalLayout() {
 
                     {
                         {
-                            [MODAL_BODY_TYPES.USER_DETAIL]: <RowDetailModalBody closeModal={close} extraObject={extraObject} />,
                             [MODAL_BODY_TYPES.CREATE_MAINTENANCE]: <ModalCreateMaintenance closeModal={close} extraObject={extraObject} />,
                             [MODAL_BODY_TYPES.EDIT_MAINTENANCE]: <ModalEditMaintenance closeModal={close} extraObject={extraObject} />,
                             [MODAL_BODY_TYPES.CONFIRM_DELETE_MAINTENANCE]: <ModalConfirmDeleteMaintenance closeModal={close} extraObject={extraObject} />,

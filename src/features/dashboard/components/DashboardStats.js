@@ -1,14 +1,16 @@
-function DashboardStats({ title, icon, value, description, colorIndex }) {
+import { CogIcon } from '@heroicons/react/24/outline'
 
-    const COLORS = ["primary", "accent"]
+
+function DashboardStats({ maintenance, id }) {
+
     return (
         <div className="stats shadow">
             <a href="#">
                 <div className="stat">
-                    <div className={`stat-figure text-${COLORS[colorIndex % 2]}`}>{icon}</div>
-                    <div className="stat-title">{title}</div>
-                    <div className={`text-${COLORS[colorIndex % 2]}`}>{value}</div>
-                    <div className="stat-desc">{description}</div>
+                    <div className={`stat-figure`}><CogIcon className='h-10 w-10' /></div>
+                    <div className="stat-title">{maintenance.vehicle.nickname}</div>
+                    <div >{maintenance.date}</div>
+                    <div className="stat-desc">Agendada</div>
                 </div>
             </a>
         </div>

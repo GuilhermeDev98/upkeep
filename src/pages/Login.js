@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -7,7 +8,7 @@ function Login() {
     const emailIdRef = useRef()
     const passwordRef = useRef()
 
-    const submitForm = (e) => {
+    const submitForm = async (e) => {
         e.preventDefault()
         setLoading(true)
         setErrorMessage("")
@@ -17,11 +18,16 @@ function Login() {
             setLoading(false)
         }
         else {
-            // Call API to check user credentials and save token in localstorage
-            localStorage.setItem("token", "DumyTokenHere")
-            setLoading(false)
-            window.location.href = '/app/dashboard'
+            try {
+                const { data } = await axios.post('auth/login', { email: emailIdRef.current.value, password: passwordRef.current.value })
+                localStorage.setItem("token", data.data.token)
+                window.location.href = '/app/dashboard'
+            } catch (error) {
+                console.log(error)
+                setLoading(false)
+            }
         }
+        setLoading(false)
     }
 
     return (

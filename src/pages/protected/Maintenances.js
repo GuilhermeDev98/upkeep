@@ -1,25 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setPageTitle } from '../../features/common/headerSlice'
+import axios from 'axios'
 
 import { PlusIcon, PencilIcon, EyeIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { MODAL_BODY_TYPES } from '../../utils/globalConstantUtil'
 import { openModal } from '../../features/common/modalSlice'
-import ModalCreateMaintenance from './components/ModalCreateMaintenance'
-
-const userSourceData = [
-  { source: "Carro 1", count: "26,345", conversionPercent: 10.2 },
-  { source: "Carro 2", count: "21,341", conversionPercent: 11.7 },
-  { source: "Instagram Ads", count: "34,379", conversionPercent: 12.4 },
-  { source: "Affiliates", count: "12,359", conversionPercent: 20.9 },
-  { source: "Organic", count: "10,345", conversionPercent: 10.3 },
-]
 
 function Maintenance() {
 
   const dispatch = useDispatch()
   const [ShowQuant, SetShowQuant] = useState(10)
   const [CheckboxesMarked, SetCheckboxesMarked] = useState([])
+  const [Maintenances, SetMaintenances] = useState([])
+  const [Pagination, SetPagination] = useState(0)
 
   useEffect(() => {
     dispatch(setPageTitle({ title: "" }))
@@ -47,6 +41,20 @@ function Maintenance() {
     }
   }
 
+  const GetMaintenances = async () => {
+    try {
+      const { data } = await axios.get('maintenances')
+      SetMaintenances(data.data.data)
+      SetPagination(data.data.total)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    GetMaintenances()
+  }, [])
+
   useEffect(() => {
     if (CheckboxesMarked.length == 0) document.getElementById('MasterCheckbox').checked = false
   }, [CheckboxesMarked])
@@ -64,6 +72,7 @@ function Maintenance() {
             <button className={`btn ${ShowQuant == 100 ? 'btn-active' : ''}`} onClick={() => SetShowQuant(100)}>100</button>
           </div>
           <div className="btn btn-success" onClick={() => dispatch(openModal({ title: "Nova Manutenção", bodyType: MODAL_BODY_TYPES.CREATE_MAINTENANCE }))}>< PlusIcon className='h-5 w-5' /></div>
+          {CheckboxesMarked.length >= 1 && <div className="btn btn-error ml-2" onClick={() => dispatch(openModal({ title: "Nova Manutenção", bodyType: MODAL_BODY_TYPES.CREATE_MAINTENANCE }))}>< TrashIcon className='h-5 w-5' /></div>}
         </div>
       </div>
       <div className="card w-full p-6 mt-6 bg-base-100 shadow-xl">
@@ -81,14 +90,14 @@ function Maintenance() {
             </thead>
             <tbody>
               {
-                userSourceData.map((u, k) => {
+                Maintenances.map((u, k) => {
                   return (
                     <tr key={k}>
                       <th><input type="checkbox" className="checkbox" id="checkbox" onClick={() => CheckUncheckOneCheckbox(k)} /></th>
-                      <td>{u.source}</td>
-                      <td>{u.count}</td>
-                      <td>{`${u.conversionPercent}%`}</td>
-                      <td> lorem inpsin </td>
+                      <td>{u.vehicle.nickname}</td>
+                      <td>{u.date}</td>
+                      <td>{u.status}</td>
+                      <td>{u.reason}</td>
                       <td className='text-center'>
                         <div className="btn-group">
                           <button className="btn btn-warning" onClick={() => dispatch(openModal({ title: "Editar Manutenção", bodyType: MODAL_BODY_TYPES.EDIT_MAINTENANCE }))}><PencilIcon className='h-4 w-4' /></button>
@@ -102,27 +111,14 @@ function Maintenance() {
             </tbody>
           </table>
         </div>
-        <div className='text-center mt-2'>
+        {Pagination > 1 && <div className='text-center mt-2'>
           <div className="btn-group">
             <button className="btn">1</button>
             <button className="btn btn-active">2</button>
             <button className="btn">3</button>
             <button className="btn">4</button>
           </div>
-        </div>
-      </div>
-
-      {/** Modal To Create A New Maintenance */}
-
-      <input type="checkbox" id="my-modal" className="modal-toggle" />
-      <div className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Congratulations random Internet user!</h3>
-          <p className="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
-          <div className="modal-action">
-            <label htmlFor="my-modal" className="btn">Yay!</label>
-          </div>
-        </div>
+        </div>}
       </div>
     </>
   )
