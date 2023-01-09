@@ -19,7 +19,7 @@ function Login() {
         }
         else {
             try {
-                const { data } = await axios.post('auth/login', { email: emailIdRef.current.value, password: passwordRef.current.value })
+                const { data } = await axios.post('auth/login', { email: 'demo@upkeep.com', password: 'password' })
                 localStorage.setItem("token", data.data.token)
                 window.location.href = '/app/dashboard'
             } catch (error) {
@@ -50,14 +50,14 @@ function Login() {
                                 <label className="label">
                                     <span className="label-text text-base-content">E-Mail</span>
                                 </label>
-                                <input type="text" ref={emailIdRef} placeholder="" className="input input-primary input-bordered w-full " />
+                                <input type="text" ref={emailIdRef} placeholder="demo@upkeep.com" className="input input-primary input-bordered w-full " />
                             </div>
 
                             <div className="form-control mt-4 w-full">
                                 <label className="label">
                                     <span className="label-text text-base-content">Senha</span>
                                 </label>
-                                <input type="password" ref={passwordRef} placeholder="Senha" className="input input-primary input-bordered w-full " />
+                                <input type="password" ref={passwordRef} placeholder="password" className="input input-primary input-bordered w-full " />
                             </div>
                         </div>
 

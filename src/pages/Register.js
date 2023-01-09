@@ -60,21 +60,21 @@ function Register() {
                                 <label className="label">
                                     <span className="label-text text-base-content">E-Mail</span>
                                 </label>
-                                <input type="text" ref={emailIdRef} placeholder="" className="input input-primary input-bordered w-full " />
+                                <input type="text" ref={emailIdRef} placeholder="E-Mail" className="input input-primary input-bordered w-full " />
                             </div>
 
                             <div className="form-control mt-4 w-full">
                                 <label className="label">
                                     <span className="label-text text-base-content">Senha</span>
                                 </label>
-                                <input type="password" ref={passwordRef} placeholder="" className="input input-primary input-bordered w-full " />
+                                <input type="password" ref={passwordRef} placeholder="Senha" className="input input-primary input-bordered w-full " />
                             </div>
 
                             <div className="form-control mt-4 w-full">
                                 <label className="label">
-                                    <span className="label-text text-base-content">Conformação De Senha</span>
+                                    <span className="label-text text-base-content">Confirmação De Senha</span>
                                 </label>
-                                <input type="password" ref={confirmPasswordRef} placeholder="" className="input input-primary input-bordered w-full " />
+                                <input type="password" ref={confirmPasswordRef} placeholder="Confirmação De Senha" className="input input-primary input-bordered w-full " />
                             </div>
 
                         </div>

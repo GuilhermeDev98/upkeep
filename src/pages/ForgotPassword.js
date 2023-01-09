@@ -46,7 +46,7 @@ function ForgotPassword() {
                                             <label className="label">
                                                 <span className="label-text text-base-content">Email</span>
                                             </label>
-                                            <input type="text" ref={emailIdRef} placeholder="" className="input input-primary input-bordered w-full " />
+                                            <input type="text" ref={emailIdRef} placeholder="E-Mail" className="input input-primary input-bordered w-full " />
                                         </div>
 
                                     </div>

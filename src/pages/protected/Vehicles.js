@@ -88,7 +88,7 @@ function Vehicles() {
             <button className={`btn ${ShowQuant == 50 ? 'btn-active' : ''}`} onClick={() => SetShowQuant(50)}>50</button>
             <button className={`btn ${ShowQuant == 100 ? 'btn-active' : ''}`} onClick={() => SetShowQuant(100)}>100</button>
           </div>
-          <div className="btn btn-success" onClick={() => dispatch(openModal({ title: "Nova Veículo", bodyType: MODAL_BODY_TYPES.CREATE_VEHICLE }))}>< PlusIcon className='h-5 w-5' /></div>
+          <div className="btn btn-success" onClick={() => dispatch(openModal({ title: "Novo Veículo", bodyType: MODAL_BODY_TYPES.CREATE_VEHICLE }))}>< PlusIcon className='h-5 w-5' /></div>
           {CheckboxesMarked.length >= 1 && <div className="btn btn-error ml-2" onClick={() => dispatch(openModal({ title: "Apagar Em Massa", bodyType: MODAL_BODY_TYPES.CONFIRM_DELETE_VEHICLE, extraObject: GetIdsOfCheckBoxesMarked() }))}>< TrashIcon className='h-5 w-5' /></div>}
         </div>
       </div>
