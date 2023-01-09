@@ -8,11 +8,12 @@ const Dashboard = () => {
     const [Maintenances, SetMaintenances] = useState([])
     const [Pagination, SetPagination] = useState(0)
 
-    const GetMaintenances = async () => {
+    const GetMaintenances = async (url = 'maintenances?perPage=8&page=1') => {
         try {
-            const { data } = await axios.get('maintenances')
+            const { data } = await axios.get(url)
             SetMaintenances(data.data.data)
-            SetPagination(data.data.total)
+            delete data.data.data
+            SetPagination(data.data)
         } catch (error) {
             console.log(error)
         }
@@ -36,17 +37,18 @@ const Dashboard = () => {
 
             {Maintenances.length == 0 && <div className='text-center'><strong>Nenhuma Manutenção Programada !</strong></div>}
 
-            {Pagination > 1 && <div className='text-center mt-5'>
+            {Pagination.last_page > 1 && <div className='text-center mt-5'>
                 <div className="btn-group">
-                    <button className="btn">1</button>
-                    <button className="btn btn-active">2</button>
-                    <button className="btn">3</button>
-                    <button className="btn">4</button>
+                    {Pagination.prev_page_url && <button className="btn" onClick={() => GetMaintenances(`maintenances?perPage=8&page=${Pagination?.prev_page_url.split("=")[1]}`)}>Anterior</button>}
+                    <button className="btn btn-active">{Pagination.current_page}</button>
+                    {Pagination.next_page_url && <button className="btn" onClick={() => GetMaintenances(`maintenances?perPage=8&page=${Pagination?.next_page_url.split("=")[1]}`)}>Próxima</button>}
                 </div>
             </div>}
 
         </>
     )
+
+
 }
 
 export default Dashboard

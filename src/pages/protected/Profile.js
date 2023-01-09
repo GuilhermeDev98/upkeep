@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { setPageTitle } from '../../features/common/headerSlice'
+import { showNotification } from '../../features/common/headerSlice'
+
 
 const Profile = () => {
     const dispatch = useDispatch()
@@ -8,6 +10,10 @@ const Profile = () => {
     useEffect(() => {
         dispatch(setPageTitle({ title: "" }))
     }, [])
+
+    const EditUser = () => {
+        dispatch(showNotification({ message: 'Dados Alterados Com Sucesso!', status: 1 }))
+    }
 
     return (
         <>
@@ -24,7 +30,7 @@ const Profile = () => {
                 <input type="text" value="anypassword@123" className="input w-full max-w-xs" />
             </div>
             <div className="mt-2 text-center">
-                <button className='btn btn-warning btn-success w-full max-w-xs'>Save</button>
+                <button className='btn btn-warning btn-success w-full max-w-xs' onClick={() => EditUser()}>Salvar</button>
             </div>
         </>
     )

@@ -6,6 +6,8 @@ import axios from 'axios'
 import { PlusIcon, PencilIcon, EyeIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { MODAL_BODY_TYPES } from '../../utils/globalConstantUtil'
 import { openModal } from '../../features/common/modalSlice'
+import FormatDateToBr from '../protected/Utils/FormatDateToBr'
+
 
 function Maintenance() {
 
@@ -41,14 +43,20 @@ function Maintenance() {
     }
   }
 
-  const GetMaintenances = async () => {
+  const GetMaintenances = async (url = `maintenances?perPage=${ShowQuant}&page=1`) => {
+    SetCheckboxesMarked([])
     try {
-      const { data } = await axios.get('maintenances')
+      const { data } = await axios.get(url)
       SetMaintenances(data.data.data)
-      SetPagination(data.data.total)
+      delete data.data.data
+      SetPagination(data.data)
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const GetIdsOfCheckBoxesMarked = () => {
+    return Maintenances.filter((value, index) => CheckboxesMarked.includes(index) ? value.id : false).map(value => value.id)
   }
 
   useEffect(() => {
@@ -56,8 +64,17 @@ function Maintenance() {
   }, [])
 
   useEffect(() => {
+    GetMaintenances()
+  }, [ShowQuant])
+
+  useEffect(() => {
     if (CheckboxesMarked.length == 0) document.getElementById('MasterCheckbox').checked = false
   }, [CheckboxesMarked])
+
+  useEffect(() => {
+    document.querySelectorAll('#checkbox').forEach(input => input.checked = false)
+    SetCheckboxesMarked([])
+  }, [Maintenances])
 
   return (
     <>
@@ -72,7 +89,7 @@ function Maintenance() {
             <button className={`btn ${ShowQuant == 100 ? 'btn-active' : ''}`} onClick={() => SetShowQuant(100)}>100</button>
           </div>
           <div className="btn btn-success" onClick={() => dispatch(openModal({ title: "Nova Manutenção", bodyType: MODAL_BODY_TYPES.CREATE_MAINTENANCE }))}>< PlusIcon className='h-5 w-5' /></div>
-          {CheckboxesMarked.length >= 1 && <div className="btn btn-error ml-2" onClick={() => dispatch(openModal({ title: "Nova Manutenção", bodyType: MODAL_BODY_TYPES.CREATE_MAINTENANCE }))}>< TrashIcon className='h-5 w-5' /></div>}
+          {CheckboxesMarked.length >= 1 && <div className="btn btn-error ml-2" onClick={() => dispatch(openModal({ title: "Apagar Em Massa", bodyType: MODAL_BODY_TYPES.CONFIRM_DELETE_MAINTENANCE, extraObject: GetIdsOfCheckBoxesMarked() }))}>< TrashIcon className='h-5 w-5' /></div>}
         </div>
       </div>
       <div className="card w-full p-6 mt-6 bg-base-100 shadow-xl">
@@ -95,13 +112,13 @@ function Maintenance() {
                     <tr key={k}>
                       <th><input type="checkbox" className="checkbox" id="checkbox" onClick={() => CheckUncheckOneCheckbox(k)} /></th>
                       <td>{u.vehicle.nickname}</td>
-                      <td>{u.date}</td>
-                      <td>{u.status}</td>
+                      <td>{FormatDateToBr(u.date)}</td>
+                      <td>{u.status ? u.tatus : 'Não Informado'}</td>
                       <td>{u.reason}</td>
                       <td className='text-center'>
                         <div className="btn-group">
-                          <button className="btn btn-warning" onClick={() => dispatch(openModal({ title: "Editar Manutenção", bodyType: MODAL_BODY_TYPES.EDIT_MAINTENANCE }))}><PencilIcon className='h-4 w-4' /></button>
-                          <button className="btn btn-error" onClick={() => dispatch(openModal({ title: "Deletar Manutenção", bodyType: MODAL_BODY_TYPES.CONFIRM_DELETE_MAINTENANCE }))}><TrashIcon className='h-4 w-4' /></button>
+                          <button className="btn btn-warning" onClick={() => dispatch(openModal({ title: "Editar Manutenção", bodyType: MODAL_BODY_TYPES.EDIT_MAINTENANCE, extraObject: u }))}><PencilIcon className='h-4 w-4' /></button>
+                          <button className="btn btn-error" onClick={() => dispatch(openModal({ title: "Deletar Manutenção", bodyType: MODAL_BODY_TYPES.CONFIRM_DELETE_MAINTENANCE, extraObject: u }))}><TrashIcon className='h-4 w-4' /></button>
                         </div>
                       </td>
                     </tr>
@@ -111,12 +128,11 @@ function Maintenance() {
             </tbody>
           </table>
         </div>
-        {Pagination > 1 && <div className='text-center mt-2'>
+        {Pagination.last_page > 1 && <div className='text-center mt-2'>
           <div className="btn-group">
-            <button className="btn">1</button>
-            <button className="btn btn-active">2</button>
-            <button className="btn">3</button>
-            <button className="btn">4</button>
+            {Pagination.prev_page_url && <button className="btn" onClick={() => GetMaintenances(`maintenances?perPage=${ShowQuant}&page=${Pagination?.prev_page_url.split("=")[1]}`)}>Anterior</button>}
+            <button className="btn btn-active">{Pagination.current_page}</button>
+            {Pagination.next_page_url && <button className="btn" onClick={() => GetMaintenances(`maintenances?perPage=${ShowQuant}&page=${Pagination?.next_page_url.split("=")[1]}`)}>Próxima</button>}
           </div>
         </div>}
       </div>

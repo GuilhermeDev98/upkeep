@@ -17,7 +17,7 @@ const ModalCreateMaintenance = ({ closeModal }) => {
     const GetUserCars = async () => {
         try {
             const { data } = await axios.get('vehicles')
-            SetUserCars(data)
+            SetUserCars(data.data)
         } catch (error) {
             console.log(error)
         }

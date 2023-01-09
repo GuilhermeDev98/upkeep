@@ -1,24 +1,21 @@
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setPageTitle } from '../../features/common/headerSlice'
+import axios from 'axios'
 
 import { PlusIcon, PencilIcon, EyeIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { MODAL_BODY_TYPES } from '../../utils/globalConstantUtil'
 import { openModal } from '../../features/common/modalSlice'
+import FormatDateToBr from '../protected/Utils/FormatDateToBr'
 
-const userSourceData = [
-  { source: "Carro 1", count: "26,345", conversionPercent: 10.2 },
-  { source: "Carro 2", count: "21,341", conversionPercent: 11.7 },
-  { source: "Instagram Ads", count: "34,379", conversionPercent: 12.4 },
-  { source: "Affiliates", count: "12,359", conversionPercent: 20.9 },
-  { source: "Organic", count: "10,345", conversionPercent: 10.3 },
-]
 
 function Vehicles() {
 
   const dispatch = useDispatch()
   const [ShowQuant, SetShowQuant] = useState(10)
   const [CheckboxesMarked, SetCheckboxesMarked] = useState([])
+  const [Maintenances, SetMaintenances] = useState([])
+  const [Pagination, SetPagination] = useState(0)
 
   useEffect(() => {
     dispatch(setPageTitle({ title: "" }))
@@ -46,9 +43,38 @@ function Vehicles() {
     }
   }
 
+  const GetVehicles = async (url = `vehicles?perPage=${ShowQuant}&page=1`) => {
+    SetCheckboxesMarked([])
+    try {
+      const { data } = await axios.get(url)
+      SetMaintenances(data.data)
+      delete data.data
+      SetPagination(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const GetIdsOfCheckBoxesMarked = () => {
+    return Maintenances.filter((value, index) => CheckboxesMarked.includes(index) ? value.id : false).map(value => value.id)
+  }
+
+  useEffect(() => {
+    GetVehicles()
+  }, [])
+
+  useEffect(() => {
+    GetVehicles()
+  }, [ShowQuant])
+
   useEffect(() => {
     if (CheckboxesMarked.length == 0) document.getElementById('MasterCheckbox').checked = false
   }, [CheckboxesMarked])
+
+  useEffect(() => {
+    document.querySelectorAll('#checkbox').forEach(input => input.checked = false)
+    SetCheckboxesMarked([])
+  }, [Maintenances])
 
   return (
     <>
@@ -62,7 +88,8 @@ function Vehicles() {
             <button className={`btn ${ShowQuant == 50 ? 'btn-active' : ''}`} onClick={() => SetShowQuant(50)}>50</button>
             <button className={`btn ${ShowQuant == 100 ? 'btn-active' : ''}`} onClick={() => SetShowQuant(100)}>100</button>
           </div>
-          <div className="btn btn-success" onClick={() => dispatch(openModal({ title: "Novo Veículo", bodyType: MODAL_BODY_TYPES.CREATE_VEHICLE }))}>< PlusIcon className='h-5 w-5' /></div>
+          <div className="btn btn-success" onClick={() => dispatch(openModal({ title: "Nova Veículo", bodyType: MODAL_BODY_TYPES.CREATE_VEHICLE }))}>< PlusIcon className='h-5 w-5' /></div>
+          {CheckboxesMarked.length >= 1 && <div className="btn btn-error ml-2" onClick={() => dispatch(openModal({ title: "Apagar Em Massa", bodyType: MODAL_BODY_TYPES.CONFIRM_DELETE_VEHICLE, extraObject: GetIdsOfCheckBoxesMarked() }))}>< TrashIcon className='h-5 w-5' /></div>}
         </div>
       </div>
       <div className="card w-full p-6 mt-6 bg-base-100 shadow-xl">
@@ -72,26 +99,28 @@ function Vehicles() {
               <tr>
                 <th><input type="checkbox" className="checkbox" onClick={() => MarkAllCheckboxes()} id="MasterCheckbox" /></th>
                 <th>Veículo</th>
-                <th>Data Programada</th>
-                <th>Status</th>
-                <th>Motivo</th>
-                <th className='text-center'> </th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Versão</th>
+                <th>Tipo</th>
+                <th className='text-center'></th>
               </tr>
             </thead>
             <tbody>
               {
-                userSourceData.map((u, k) => {
+                Maintenances.map((u, k) => {
                   return (
                     <tr key={k}>
                       <th><input type="checkbox" className="checkbox" id="checkbox" onClick={() => CheckUncheckOneCheckbox(k)} /></th>
-                      <td>{u.source}</td>
-                      <td>{u.count}</td>
-                      <td>{`${u.conversionPercent}%`}</td>
-                      <td> lorem inpsin </td>
+                      <td>{u.nickname}</td>
+                      <td>{u.brand}</td>
+                      <td>{u.model}</td>
+                      <td>{u.version}</td>
+                      <td>{u.type}</td>
                       <td className='text-center'>
                         <div className="btn-group">
-                          <button className="btn btn-warning" onClick={() => dispatch(openModal({ title: "Editar Veículo", bodyType: MODAL_BODY_TYPES.EDIT_VEHICLE }))}><PencilIcon className='h-4 w-4' /></button>
-                          <button className="btn btn-error" onClick={() => dispatch(openModal({ title: "Deletar Veículo", bodyType: MODAL_BODY_TYPES.CONFIRM_DELETE_VEHICLE }))}><TrashIcon className='h-4 w-4' /></button>
+                          <button className="btn btn-warning" onClick={() => dispatch(openModal({ title: "Editar Veículo", bodyType: MODAL_BODY_TYPES.EDIT_VEHICLE, extraObject: u }))}><PencilIcon className='h-4 w-4' /></button>
+                          <button className="btn btn-error" onClick={() => dispatch(openModal({ title: "Deletar Veículo", bodyType: MODAL_BODY_TYPES.CONFIRM_DELETE_VEHICLE, extraObject: u }))}><TrashIcon className='h-4 w-4' /></button>
                         </div>
                       </td>
                     </tr>
@@ -101,14 +130,13 @@ function Vehicles() {
             </tbody>
           </table>
         </div>
-        <div className='text-center mt-2'>
+        {Pagination.last_page > 1 && <div className='text-center mt-2'>
           <div className="btn-group">
-            <button className="btn">1</button>
-            <button className="btn btn-active">2</button>
-            <button className="btn">3</button>
-            <button className="btn">4</button>
+            {Pagination.prev_page_url && <button className="btn" onClick={() => GetVehicles(`vehicles?perPage=${ShowQuant}&page=${Pagination?.prev_page_url.split("=")[1]}`)}>Anterior</button>}
+            <button className="btn btn-active">{Pagination.current_page}</button>
+            {Pagination.next_page_url && <button className="btn" onClick={() => GetVehicles(`vehicles?perPage=${ShowQuant}&page=${Pagination?.next_page_url.split("=")[1]}`)}>Próxima</button>}
           </div>
-        </div>
+        </div>}
       </div>
     </>
   )

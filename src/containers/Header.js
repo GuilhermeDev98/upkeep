@@ -92,7 +92,7 @@ function Header() {
                             <li>
                                 <a href="/app/profile" className="justify-between">
                                     Perfil
-                                    <span className="badge">1</span>
+                                    {/*<span className="badge">1</span>*/}
                                 </a>
                             </li>
                             {/*<li><a>Configurações</a></li>
