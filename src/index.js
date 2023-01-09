@@ -1,4 +1,4 @@
-import React,  { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -10,11 +10,11 @@ import SuspenseContent from './containers/SuspenseContent';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
-    <Suspense fallback={<SuspenseContent />}>
-        <Provider store={store}>
-            <App />
-        </Provider>
-    </Suspense>
+  <Suspense fallback={<SuspenseContent />}>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </Suspense>
   // </React.StrictMode>
 );
 
