@@ -12,6 +12,7 @@ function ModalEditMaintenance({ closeModal, extraObject }) {
     const [Reason, SetReason] = useState(extraObject?.reason)
     const [Id, SetId] = useState(extraObject?.id)
 
+
     const EditMaintenance = async () => {
         const newValue = {
             date: FormatDateToBr(Date),

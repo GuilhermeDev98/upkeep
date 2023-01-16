@@ -1,17 +1,23 @@
 import DashboardStats from './components/DashboardStats'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux'
+import { setMaintenances } from '../common/maintenanceSlice';
+
+
 
 
 const Dashboard = () => {
+    const dispatch = useDispatch()
 
-    const [Maintenances, SetMaintenances] = useState([])
+    const { allMaintenances } = useSelector(state => state.maintenances)
+
     const [Pagination, SetPagination] = useState(0)
 
     const GetMaintenances = async (url = 'maintenances?perPage=8&page=1') => {
         try {
             const { data } = await axios.get(url)
-            SetMaintenances(data.data.data)
+            dispatch(setMaintenances(data.data.data))
             delete data.data.data
             SetPagination(data.data)
         } catch (error) {
@@ -22,12 +28,12 @@ const Dashboard = () => {
     useEffect(() => {
         GetMaintenances()
     }, [])
-
+    console.log(allMaintenances)
     return (
         <>
             <div className="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-6">
                 {
-                    Maintenances.map((d, k) => {
+                    allMaintenances.map((d, k) => {
                         return (
                             <DashboardStats key={k} maintenance={d} id={k} />
                         )
@@ -35,7 +41,7 @@ const Dashboard = () => {
                 }
             </div>
 
-            {Maintenances.length == 0 && <div className='text-center'><strong>Nenhuma Manutenção Programada !</strong></div>}
+            {allMaintenances.length == 0 && <div className='text-center'><strong>Nenhuma Manutenção Programada !</strong></div>}
 
             {Pagination.last_page > 1 && <div className='text-center mt-5'>
                 <div className="btn-group">

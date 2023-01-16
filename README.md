@@ -25,7 +25,10 @@ Go to project directory and run
 - [DashWind v1.0](https://tailwind-dashboard-template-dashwind.vercel.app/documentation)
 
 ## Fix
-- [] Na Página Inicial, ao clicar no botão de adicionar nova manutenção, verificar se já existe algum veículo cadastrado, se não, adicionar botão para abri modal de adição de veículo
+- [X] Na página inicial, ao clicar no botão de adicionar nova manutenção, verificar se já existe algum veículo cadastrado, se não, adicionar botão para abrir modal de adição de veículo.
+- [] Gerenciar todos os estados com redux
+- [] Se o apleido do veículo não for definido na hora da criação, criar um hash para nomea-lo
+
 
 ## License
 

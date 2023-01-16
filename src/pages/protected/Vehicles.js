@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setVehicles } from '../../features/common/vehiclesSlice'
 import { setPageTitle } from '../../features/common/headerSlice'
 import axios from 'axios'
 
 import { PlusIcon, PencilIcon, EyeIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { MODAL_BODY_TYPES } from '../../utils/globalConstantUtil'
 import { openModal } from '../../features/common/modalSlice'
-import FormatDateToBr from '../protected/Utils/FormatDateToBr'
-
 
 function Vehicles() {
 
   const dispatch = useDispatch()
+
+  const { allVehicles } = useSelector(state => state.vehicles)
+
   const [ShowQuant, SetShowQuant] = useState(10)
   const [CheckboxesMarked, SetCheckboxesMarked] = useState([])
-  const [Maintenances, SetMaintenances] = useState([])
   const [Pagination, SetPagination] = useState(0)
 
   useEffect(() => {
@@ -47,7 +48,7 @@ function Vehicles() {
     SetCheckboxesMarked([])
     try {
       const { data } = await axios.get(url)
-      SetMaintenances(data.data)
+      dispatch(setVehicles([...data.data]))
       delete data.data
       SetPagination(data)
     } catch (error) {
@@ -56,7 +57,7 @@ function Vehicles() {
   }
 
   const GetIdsOfCheckBoxesMarked = () => {
-    return Maintenances.filter((value, index) => CheckboxesMarked.includes(index) ? value.id : false).map(value => value.id)
+    return allVehicles.filter((value, index) => CheckboxesMarked.includes(index) ? value.id : false).map(value => value.id)
   }
 
   useEffect(() => {
@@ -74,7 +75,7 @@ function Vehicles() {
   useEffect(() => {
     document.querySelectorAll('#checkbox').forEach(input => input.checked = false)
     SetCheckboxesMarked([])
-  }, [Maintenances])
+  }, [allVehicles])
 
   return (
     <>
@@ -108,7 +109,7 @@ function Vehicles() {
             </thead>
             <tbody>
               {
-                Maintenances.map((u, k) => {
+                allVehicles && allVehicles.map((u, k) => {
                   return (
                     <tr key={k}>
                       <th><input type="checkbox" className="checkbox" id="checkbox" onClick={() => CheckUncheckOneCheckbox(k)} /></th>

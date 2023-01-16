@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setPageTitle } from '../../features/common/headerSlice'
 import axios from 'axios'
 
@@ -8,18 +8,19 @@ import { MODAL_BODY_TYPES } from '../../utils/globalConstantUtil'
 import { openModal } from '../../features/common/modalSlice'
 import FormatDateToBr from '../protected/Utils/FormatDateToBr'
 
+import { setVehicles } from '../../features/common/vehiclesSlice'
+import { setMaintenances } from '../../features/common/maintenanceSlice'
+
 
 function Maintenance() {
 
   const dispatch = useDispatch()
+
+  const { allMaintenances } = useSelector(state => state.maintenances)
+
   const [ShowQuant, SetShowQuant] = useState(10)
   const [CheckboxesMarked, SetCheckboxesMarked] = useState([])
-  const [Maintenances, SetMaintenances] = useState([])
   const [Pagination, SetPagination] = useState(0)
-
-  useEffect(() => {
-    dispatch(setPageTitle({ title: "" }))
-  }, [])
 
   const MarkAllCheckboxes = () => {
     const masterCheckboxValue = document.getElementById("MasterCheckbox").checked
@@ -47,7 +48,7 @@ function Maintenance() {
     SetCheckboxesMarked([])
     try {
       const { data } = await axios.get(url)
-      SetMaintenances(data.data.data)
+      dispatch(setMaintenances(data.data.data))
       delete data.data.data
       SetPagination(data.data)
     } catch (error) {
@@ -55,12 +56,23 @@ function Maintenance() {
     }
   }
 
+  const GetVehicles = async () => {
+    try {
+      const { data } = await axios.get('vehicles')
+      dispatch(setVehicles(data.data))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const GetIdsOfCheckBoxesMarked = () => {
-    return Maintenances.filter((value, index) => CheckboxesMarked.includes(index) ? value.id : false).map(value => value.id)
+    return allMaintenances.filter((value, index) => CheckboxesMarked.includes(index) ? value.id : false).map(value => value.id)
   }
 
   useEffect(() => {
+    dispatch(setPageTitle({ title: "" }))
     GetMaintenances()
+    GetVehicles()
   }, [])
 
   useEffect(() => {
@@ -74,7 +86,7 @@ function Maintenance() {
   useEffect(() => {
     document.querySelectorAll('#checkbox').forEach(input => input.checked = false)
     SetCheckboxesMarked([])
-  }, [Maintenances])
+  }, [allMaintenances])
 
   return (
     <>
@@ -107,7 +119,7 @@ function Maintenance() {
             </thead>
             <tbody>
               {
-                Maintenances.map((u, k) => {
+                allMaintenances.map((u, k) => {
                   return (
                     <tr key={k}>
                       <th><input type="checkbox" className="checkbox" id="checkbox" onClick={() => CheckUncheckOneCheckbox(k)} /></th>

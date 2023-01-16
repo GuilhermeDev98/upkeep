@@ -4,15 +4,27 @@ import { setPageTitle } from '../../features/common/headerSlice'
 import { MODAL_BODY_TYPES } from '../../utils/globalConstantUtil'
 import { openModal } from '../../features/common/modalSlice'
 import Dashboard from '../../features/dashboard/index'
-
 import { PlusIcon } from '@heroicons/react/24/outline'
+import { setVehicles } from '../../features/common/vehiclesSlice'
+import axios from 'axios'
 
 function InternalPage() {
     const dispatch = useDispatch()
 
+    const GetVehicles = async () => {
+        try {
+            const { data } = await axios.get('vehicles')
+            dispatch(setVehicles(data.data))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     useEffect(() => {
         dispatch(setPageTitle({ title: "" }))
+        GetVehicles()
     }, [])
+
 
 
     return (
